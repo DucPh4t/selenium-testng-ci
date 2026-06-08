@@ -52,7 +52,26 @@ public class LoginTest {
             e.printStackTrace();
         }
 
-        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login failed!");
+        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login failed with correct credentials!");
+    }
+
+    @Test
+    public void testFailedLogin() {
+        System.out.println("Bắt đầu test luồng đăng nhập SAI mật khẩu...");
+        // Cố tình nhập mật khẩu sai
+        loginPage.enterCredentials("standard_user", "sai_mat_khau_roi");
+        loginPage.clickLogin();
+
+        // Thêm delay nhỏ để web kịp xử lý
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Đăng nhập sai thì isLoginSuccessful() phải trả về false.
+        // Ta dùng assertFalse, nếu nó trả về false -> Test Pass (vì đúng kịch bản là không cho đăng nhập)
+        Assert.assertFalse(loginPage.isLoginSuccessful(), "Lỗi bảo mật: Đăng nhập sai pass nhưng vẫn thành công!");
     }
 
     @AfterMethod
