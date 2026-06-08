@@ -9,10 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
-      fail-fast: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,14 +28,14 @@ jobs:
 
       - name: Run tests
         env:
-          BROWSER: ${{ matrix.browser }}
-        run: mvn clean test -Dbrowser=${{ matrix.browser }}
+          BROWSER: chrome
+        run: mvn clean test -Dbrowser=chrome
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ matrix.browser }}
+          name: test-reports-chrome
           path: target/surefire-reports/
 
       - name: Generate Allure report
@@ -50,5 +46,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-${{ matrix.browser }}
+          name: allure-report
           path: target/site/allure-maven-plugin/

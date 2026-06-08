@@ -44,6 +44,7 @@ public class LoginTest {
 
     @Test
     public void testSuccessfulLogin() {
+        System.out.println("Bắt đầu test luồng đăng nhập ĐÚNG mật khẩu...");
         loginPage.enterCredentials("standard_user", "secret_sauce");
         loginPage.clickLogin();
 
