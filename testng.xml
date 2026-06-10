@@ -2,7 +2,7 @@
 <suite name="TLU Login Test Suite" parallel="methods" thread-count="2">
     <test name="Login Tests">
         <classes>
-            <class name="tests.LoginTest"/>
+            <class name="com.nguyenducphat.tests.LoginTest"/>
         </classes>
     </test>
 </suite>

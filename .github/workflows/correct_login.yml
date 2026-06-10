@@ -30,7 +30,7 @@ jobs:
       - name: Run Correct Login Test
         env:
           BROWSER: chrome
-        run: mvn clean test -Dbrowser=chrome -Dtest=LoginTest#testSuccessfulLogin
+        run: mvn clean test -Dbrowser=chrome -Dtest=com.nguyenducphat.tests.LoginTest#testSuccessfulLogin
 
       - name: Upload test reports
         if: always()
