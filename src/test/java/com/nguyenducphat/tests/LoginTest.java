@@ -63,9 +63,6 @@ public class LoginTest {
         // LỰA CHỌN 1: Mật khẩu ĐÚNG (mặc định để test này PASS)
         getLoginPage().enterCredentials("2351067119", "079205011830");
 
-        // LỰA CHỌN 2: Mật khẩu SAI (bỏ dấu comment '//' dòng dưới và comment dòng Lựa chọn 1 lại khi thầy yêu cầu "cả 2 acc đều sai")
-        // getLoginPage().enterCredentials("2351067119", "sai_mat_khau_de_bi_fail");
-
         getLoginPage().clickLogin();
 
         // Chờ trang xử lý đăng nhập
