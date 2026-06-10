@@ -59,7 +59,13 @@ public class LoginTest {
     @Test
     public void testSuccessfulLogin() {
         System.out.println("Thread ID " + Thread.currentThread().getId() + ": Bắt đầu test luồng đăng nhập ĐÚNG mật khẩu...");
+        
+        // LỰA CHỌN 1: Mật khẩu ĐÚNG (mặc định để test này PASS)
         getLoginPage().enterCredentials("2351067119", "079205011830");
+
+        // LỰA CHỌN 2: Mật khẩu SAI (bỏ dấu comment '//' dòng dưới và comment dòng Lựa chọn 1 lại khi thầy yêu cầu "cả 2 acc đều sai")
+        // getLoginPage().enterCredentials("2351067119", "sai_mat_khau_de_bi_fail");
+
         getLoginPage().clickLogin();
 
         // Chờ trang xử lý đăng nhập
@@ -76,7 +82,13 @@ public class LoginTest {
     @Test
     public void testFailedLogin() {
         System.out.println("Thread ID " + Thread.currentThread().getId() + ": Bắt đầu test luồng đăng nhập SAI mật khẩu...");
+        
+        // LỰA CHỌN 1: Mật khẩu SAI (mặc định để test này PASS vì mong muốn đăng nhập thất bại)
         getLoginPage().enterCredentials("2351067119", "sai_mat_khau_tlu");
+
+        // LỰA CHỌN 2: Mật khẩu ĐÚNG (bỏ dấu comment '//' dòng dưới và comment dòng Lựa chọn 1 lại nếu thầy yêu cầu "cả 2 acc đều đúng")
+        // getLoginPage().enterCredentials("2351067119", "079205011830");
+
         getLoginPage().clickLogin();
 
         // Chờ trang xử lý đăng nhập
