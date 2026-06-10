@@ -1,4 +1,4 @@
-name: Selenium Cross-Browser Tests
+name: Selenium TLU Parallel Tests
 
 on:
   push:
@@ -8,7 +8,11 @@ on:
 
 jobs:
   test:
+    name: Test - ${{ matrix.flow }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flow: [SuccessfulLogin, FailedLogin]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,16 +30,16 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run tests
+      - name: Run test flow
         env:
           BROWSER: chrome
-        run: mvn clean test -Dbrowser=chrome
+        run: mvn clean test -Dbrowser=chrome -Dtest=LoginTest#test${{ matrix.flow }}
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-chrome
+          name: test-reports-${{ matrix.flow }}
           path: target/surefire-reports/
 
       - name: Generate Allure report
@@ -46,5 +50,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
+          name: allure-report-${{ matrix.flow }}
           path: target/site/allure-maven-plugin/
