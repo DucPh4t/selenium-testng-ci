@@ -1,4 +1,4 @@
-name: Selenium TLU Parallel Tests
+name: TLU Incorrect Login Test
 
 on:
   push:
@@ -8,11 +8,8 @@ on:
 
 jobs:
   test:
-    name: Test - ${{ matrix.flow }}
+    name: Run Incorrect Login Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        flow: [SuccessfulLogin, FailedLogin]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,16 +27,16 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run test flow
+      - name: Run Incorrect Login Test
         env:
           BROWSER: chrome
-        run: mvn clean test -Dbrowser=chrome -Dtest=LoginTest#test${{ matrix.flow }}
+        run: mvn clean test -Dbrowser=chrome -Dtest=LoginTest#testFailedLogin
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ matrix.flow }}
+          name: test-reports-incorrect
           path: target/surefire-reports/
 
       - name: Generate Allure report
@@ -50,5 +47,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-${{ matrix.flow }}
+          name: allure-report-incorrect
           path: target/site/allure-maven-plugin/
