@@ -58,8 +58,9 @@ public class LoginTest {
 
     @Test
     public void testSuccessfulLogin() {
-        System.out.println("Thread ID " + Thread.currentThread().getId() + ": Bắt đầu test luồng đăng nhập ĐÚNG mật khẩu...");
-        getLoginPage().enterCredentials("2351067119", "079205011830");
+        System.out.println("Thread ID " + Thread.currentThread().getId() + ": Bắt đầu test luồng đăng nhập ĐÚNG mật khẩu nhưng cố tình dùng mật khẩu sai...");
+        // Cố tình dùng mật khẩu sai ở test mong đợi thành công để test bị FAIL
+        getLoginPage().enterCredentials("2351067119", "sai_mat_khau_de_bi_fail");
         getLoginPage().clickLogin();
 
         // Chờ trang xử lý đăng nhập
@@ -69,7 +70,7 @@ public class LoginTest {
             e.printStackTrace();
         }
 
-        Assert.assertTrue(getLoginPage().isLoginSuccessful(), "Đăng nhập thất bại với tài khoản đúng!");
+        Assert.assertTrue(getLoginPage().isLoginSuccessful(), "Đăng nhập thất bại (mong đợi thành công nhưng dùng sai pass)!");
         System.out.println("Thread ID " + Thread.currentThread().getId() + ": Luồng đăng nhập đúng mật khẩu -> THÀNH CÔNG (Pass)");
     }
 
