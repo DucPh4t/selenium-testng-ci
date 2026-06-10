@@ -14,19 +14,29 @@ import pages.LoginPage;
 import java.time.Duration;
 
 public class LoginTest {
-    private WebDriver driver;
-    private LoginPage loginPage;
+    // Sử dụng ThreadLocal để chạy song song an toàn, không bị đụng độ driver giữa các luồng
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private static ThreadLocal<LoginPage> loginPage = new ThreadLocal<>();
+
+    public WebDriver getDriver() {
+        return driver.get();
+    }
+
+    public LoginPage getLoginPage() {
+        return loginPage.get();
+    }
 
     @BeforeMethod
     public void setup() {
         String browser = System.getProperty("browser", "chrome");
+        WebDriver webDriver;
 
-        if (browser.equals("firefox")) {
+        if (browser.equalsIgnoreCase("firefox")) {
             FirefoxOptions options = new FirefoxOptions();
             options.addArguments("--headless");
             options.addArguments("--width=1920");
             options.addArguments("--height=1080");
-            driver = new FirefoxDriver(options);
+            webDriver = new FirefoxDriver(options);
         } else {
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--remote-allow-origins=*");
@@ -34,53 +44,60 @@ public class LoginTest {
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
             options.addArguments("--window-size=1920,1080");
-            driver = new ChromeDriver(options);
+            options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
+            webDriver = new ChromeDriver(options);
         }
 
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.get("https://www.saucedemo.com/");
-        loginPage = new LoginPage(driver);
+        webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        webDriver.manage().window().maximize();
+        webDriver.get("https://sinhvien1.tlu.edu.vn/");
+
+        driver.set(webDriver);
+        loginPage.set(new LoginPage(webDriver));
     }
 
     @Test
     public void testSuccessfulLogin() {
-        System.out.println("Bắt đầu test luồng đăng nhập ĐÚNG mật khẩu...");
-        loginPage.enterCredentials("standard_user", "secret_sauce");
-        loginPage.clickLogin();
+        System.out.println("Thread ID " + Thread.currentThread().getId() + ": Bắt đầu test luồng đăng nhập ĐÚNG mật khẩu...");
+        getLoginPage().enterCredentials("2351067119", "079205011830");
+        getLoginPage().clickLogin();
 
-        // Thêm delay nhỏ để web kịp chuyển trang
+        // Chờ trang xử lý đăng nhập
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login failed with correct credentials!");
+        Assert.assertTrue(getLoginPage().isLoginSuccessful(), "Đăng nhập thất bại với tài khoản đúng!");
+        System.out.println("Thread ID " + Thread.currentThread().getId() + ": Luồng đăng nhập đúng mật khẩu -> THÀNH CÔNG (Pass)");
     }
 
     @Test
     public void testFailedLogin() {
-        System.out.println("Bắt đầu test luồng đăng nhập SAI mật khẩu...");
-        // Cố tình nhập mật khẩu sai
-        loginPage.enterCredentials("standard_user", "sai_mat_khau_roi");
-        loginPage.clickLogin();
+        System.out.println("Thread ID " + Thread.currentThread().getId() + ": Bắt đầu test luồng đăng nhập SAI mật khẩu...");
+        getLoginPage().enterCredentials("2351067119", "sai_mat_khau_tlu");
+        getLoginPage().clickLogin();
 
-        // Thêm delay nhỏ để web kịp xử lý
+        // Chờ trang xử lý đăng nhập
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        // Đăng nhập sai thì isLoginSuccessful() phải trả về false.
-        // Ta dùng assertFalse, nếu nó trả về false -> Test Pass (vì đúng kịch bản là không cho đăng nhập)
-        Assert.assertFalse(loginPage.isLoginSuccessful(), "Lỗi bảo mật: Đăng nhập sai pass nhưng vẫn thành công!");
+        // Với tài khoản sai, đăng nhập phải thất bại (tức là isLoginSuccessful() trả về false)
+        Assert.assertFalse(getLoginPage().isLoginSuccessful(), "Lỗi bảo mật: Đăng nhập sai mật khẩu nhưng vẫn thành công!");
+        System.out.println("Thread ID " + Thread.currentThread().getId() + ": Luồng đăng nhập sai mật khẩu -> THẤT BẠI NHƯ MONG ĐỢI (Pass)");
     }
 
     @AfterMethod
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        WebDriver webDriver = getDriver();
+        if (webDriver != null) {
+            webDriver.quit();
         }
+        driver.remove();
+        loginPage.remove();
     }
 }

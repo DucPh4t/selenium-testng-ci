@@ -1,0 +1,9 @@
+target/
+allure-results/
+.DS_Store
+*.log
+.idea/
+*.class
+*.jar
+*.war
+*.ear
